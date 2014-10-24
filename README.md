@@ -5,7 +5,7 @@ laravel-searchable
 
 Make Laravel models instantly indexed and searchable in Elastic Search.
 
-Just use the SearchableTrait in your model. This will enable a model observer that acts on the `created`, `updated` and `deleted` events to keep your indexes up to date.
+Just use the SearchableTrait in your model. This will enable a model observer that acts on the s`created`, `updated` and `deleted` events to keep your indexes up to date.
 
 The trait adds a `search` method to your model that makes it easy to search Elastic Search for hits.
 
@@ -85,7 +85,7 @@ $query = [ 'filtered' => [
     'filter' => [ 'term' => [ 'user_id' => 14 ]],
 ]];
 
-$hits = Thing::seach($query);
+$hits = Thing::search($query);
 ```
 
 You can also search multiple models at once using the Searchable facade, which uses the native Elastic Search way of searching in multiple indexes/document types. The search method on `Searchable` takes an array of fully qualified class names of models, and needs to be chained to the `withSearch` method. An example:
