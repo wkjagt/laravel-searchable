@@ -2,6 +2,7 @@
     "name": "wkjagt/searchable",
     "description": "Make Laravel models instantly searchable, and automatically indexed using Elastic Search.",
     "keywords": ["laravel", "search", "searching", "elasticsearch", "eloquent"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Willem van der Jagt",
