@@ -1,6 +1,7 @@
 {
     "name": "wkjagt/searchable",
-    "description": "",
+    "description": "Make Laravel models instantly searchable, and automatically indexed using Elastic Search.",
+    "keywords": ["laravel", "search", "searching", "elasticsearch", "eloquent"],
     "authors": [
         {
             "name": "Willem van der Jagt",
@@ -9,7 +10,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "laravel/framework": "4.2.6",
+        "illuminate/database" : "4.2.*",
         "illuminate/support": "4.2.*"
     },
     "require-dev": {
