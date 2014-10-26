@@ -75,4 +75,14 @@ trait SearchableTrait
         return App::make('searchable')->search([__CLASS__])->withQuery($query);
     }
 
+    /**
+     * Index all models of this type
+     */
+    public function indexAll()
+    {
+        foreach($this->all() as $model) {
+
+            App::make('searchable.engine')->index($model);
+        }
+    }
 }

@@ -79,7 +79,14 @@ class ElasticSearchEngine implements SearchEngineInterface
             'body' => ['query' => $query]
         ];
 
-        $queryResponse = $this->client->search($params);
+        try {
+            $queryResponse = $this->client->search($params);
+
+        } catch(Missing404Exception $e) {
+
+            // the index doesn't exist: no results
+            return [];
+        }
 
         return $this->hydrator->hydrate($queryResponse, $models);
     }
