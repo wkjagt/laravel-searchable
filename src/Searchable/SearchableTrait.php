@@ -59,7 +59,7 @@ trait SearchableTrait
             return static::$searchIndexName;
         }
 
-        return 'main';
+        return 'default';
     }
 
     /**
