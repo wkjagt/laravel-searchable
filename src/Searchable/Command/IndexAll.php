@@ -1,8 +1,8 @@
-<?php
+<?php namespace Searchable\Command;
 
-namespace Searchable\Command;
+use Illuminate\Console\Command;
 
-class IndexAll
+class IndexAll extends Command
 {
-
+    
 } 
