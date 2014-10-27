@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
+use Searchable\Command\IndexAll;
 
 class SearchableServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,8 @@ class SearchableServiceProvider extends ServiceProvider
     {
         $this->package('wkjagt/searchable');
         $this->app['config']->package('wkjagt/searchable', __DIR__.'/../../config');
+
+        $this->registerCommands();
     }
 
     /**
@@ -54,4 +57,17 @@ class SearchableServiceProvider extends ServiceProvider
         return array('searchable', 'searchable.engine');
     }
 
+    /**
+     * Register console command bindings.
+     *
+     * @return void
+     */
+    protected function registerCommands()
+    {
+        $this->app->bindIf('command.searchable.indexall', function () {
+            return new IndexAll();
+        });
+
+        $this->commands('command.searchable.indexall');
+    }
 }
