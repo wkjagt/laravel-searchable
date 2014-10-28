@@ -41,9 +41,9 @@ class SearchableServiceProvider extends ServiceProvider
             return new Searchable;
         });
 
-        $this->app->singleton('searchable.engine', function()
+        $this->app->singleton('searchable.engine', function($app)
         {
-            return App::make('Searchable\Engines\SearchEngineInterface');
+            return $app->make('Searchable\Engines\SearchEngineInterface');
         });
     }
 
