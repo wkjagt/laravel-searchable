@@ -2,6 +2,7 @@
 
 namespace Searchable\Engines;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\App;
 use Searchable\SearchResult;
 
@@ -15,6 +16,21 @@ use Searchable\SearchResult;
  */
 class ElasticSearchSearchResultHydrator implements SearchResultHydratorInterface
 {
+    /**
+     * @var Application
+     */
+    private $app;
+
+    /**
+     * Constructor
+     *
+     * @param Application $app
+     */
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
     /**
      * @param array $response
      * @return array
@@ -38,7 +54,7 @@ class ElasticSearchSearchResultHydrator implements SearchResultHydratorInterface
     /**
      * Identify a model from an index and document type combination and return
      * an instance of it.
-     * 
+     *
      * @param array $hit
      * @param array $models
      * @return mixed
@@ -51,7 +67,7 @@ class ElasticSearchSearchResultHydrator implements SearchResultHydratorInterface
                $model::getSearchDocumentType() === $hit['_type']
             ) {
 
-                return App::make($model);
+                return $this->app->make($model);
             }
         }
     }
