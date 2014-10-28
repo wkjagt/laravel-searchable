@@ -3,6 +3,12 @@
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
+/**
+ * An artisan command to index all instances of a model.
+ *
+ * Class IndexAll
+ * @package Searchable\Command
+ */
 class IndexAll extends Command
 {
     /**
