@@ -25,10 +25,28 @@ class IndexAll extends Command
      */
     public function fire()
     {
-        $modelClassArg = $this->argument('modelclass');
+        $modelClass = str_replace('/', '\\', $this->argument('modelclass'));
 
-        $modelClass = str_replace('/', '\\', $modelClassArg);
+        $model = $this->laravel->make($modelClass);
 
-        $this->laravel->make($modelClass)->indexAll();
+        $this->indexModel($model, $modelClass);
     }
+
+    /**
+     * @param $model
+     * @param $modelClass
+     */
+    protected function indexModel($model, $modelClass)
+    {
+        if( ! in_array('Searchable\\SearchableTrait', class_uses($modelClass))) {
+
+            return $this->error(sprintf('Model [%s] doesn\'t use Searchable\\SearchableTrait', $modelClass));
+        }
+
+        $this->info(sprintf('Indexing %d models of type [%s] to index [%s] using document type [%s]',
+            $model->count(), get_class($model), $modelClass::getSearchIndexName(), $modelClass::getSearchDocumentType()));
+
+        $model->indexAll();
+    }
+
 } 
