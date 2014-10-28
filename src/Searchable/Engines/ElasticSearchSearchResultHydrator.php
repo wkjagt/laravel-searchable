@@ -35,6 +35,14 @@ class ElasticSearchSearchResultHydrator implements SearchResultHydratorInterface
         return $results;
     }
 
+    /**
+     * Identify a model from an index and document type combination and return
+     * an instance of it.
+     * 
+     * @param array $hit
+     * @param array $models
+     * @return mixed
+     */
     protected function getModelFromHit(array $hit, array $models)
     {
         foreach($models as $model) {
