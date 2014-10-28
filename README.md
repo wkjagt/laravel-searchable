@@ -70,7 +70,7 @@ class Thing extends Model {
     
     public static $searchDocumentType = 'thing';
     
-    public static searchIndexName = 'my_index';
+    public static $searchIndexName = 'my_index';
 }
 ```
 
