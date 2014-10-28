@@ -16,6 +16,8 @@ class Searchable
      *
      * @param array $models an array of model fully qualified model class names
      * @return SearchRequest
+     *
+     * @throws InvalidArgumentException if one of the models doesn't use the SearchableTrait
      */
     public function search(array $models)
     {
