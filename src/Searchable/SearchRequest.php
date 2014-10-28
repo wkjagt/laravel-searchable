@@ -6,12 +6,6 @@ use Illuminate\Support\Facades\App;
 
 class SearchRequest
 {
-    protected $indexes = [];
-
-    protected $docTypes = [];
-
-    protected $models = [];
-
     public function addModel($model)
     {
         $this->models[] = $model;
