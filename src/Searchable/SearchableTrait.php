@@ -1,5 +1,6 @@
 <?php namespace Searchable;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\App;
 
 /**
@@ -27,6 +28,11 @@ trait SearchableTrait
         $class = __CLASS__;
 
         $class::observe(App::make('Searchable\SearchableObserver'));
+    }
+
+    public function createMapping()
+    {
+        App::make('searchable.engine')->createMappingFor($this);
     }
 
     /**

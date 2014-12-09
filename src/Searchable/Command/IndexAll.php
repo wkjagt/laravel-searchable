@@ -35,22 +35,26 @@ class IndexAll extends Command
 
         $model = $this->laravel->make($modelClass);
 
-        $this->indexModel($model, $modelClass);
+        $model->createMapping();
+
+        $this->indexModel($model);
     }
 
     /**
      * @param $model
      * @param $modelClass
      */
-    protected function indexModel($model, $modelClass)
+    protected function indexModel($model)
     {
+        $modelClass = get_class($model);
+
         if( ! in_array('Searchable\\SearchableTrait', class_uses($modelClass))) {
 
             return $this->error(sprintf('Model [%s] doesn\'t use Searchable\\SearchableTrait', $modelClass));
         }
 
         $this->info(sprintf('Indexing %d models of type [%s] to index [%s] using document type [%s]',
-            $model->count(), get_class($model), $modelClass::getSearchIndexName(), $modelClass::getSearchDocumentType()));
+            $model->count(), $modelClass, $modelClass::getSearchIndexName(), $modelClass::getSearchDocumentType()));
 
         $model->indexAll();
     }

@@ -2,10 +2,12 @@
 
 namespace Searchable\Engines;
 
+use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Illuminate\Database\Eloquent\Model;
 use Elasticsearch\Client as ESClient;
 use Illuminate\Config\Repository as Config;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * The Elastic Search search engine.
@@ -48,19 +50,69 @@ class ElasticSearchEngine implements SearchEngineInterface
     }
 
     /**
+     * Creating a mapping is currently only needed for autocomplete functionality.
+     * If the model doesn't implement the searchSuggestValue method, we can skip
+     * this step.
+     * 
+     * @param Model $model
+     */
+    public function createMappingFor(Model $model)
+    {
+        if(! method_exists($model, 'searchSuggestValue')) {
+
+            return;
+        }
+
+        $this->createIndexFor($model);
+
+        $mappingParams = [
+            'index' => $model::getSearchIndexName(),
+            'type' => $model::getSearchDocumentType(),
+            'body' => [
+                $model::getSearchDocumentType() => [
+                    'properties' => [
+                        '__suggest' => [
+                            'type' => 'completion',
+                            "index_analyzer" => "simple",
+                            "search_analyzer" => "simple",
+                            "payloads" => true
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $this->client->indices()->putMapping($mappingParams);
+    }
+
+    /**
      * Add a model to an Elastic Search index
      *
      * @param Model $model
      */
     public function index(Model $model)
     {
+        $body = $model->toArray();
+
+        if(method_exists($model, 'searchSuggestValue')) {
+
+            $suggest = $model->searchSuggestValue();
+
+            $body['__suggest'] = [
+                'input' => explode(' ', $suggest),
+                'output' => $suggest,
+                'payload' => [
+                    'id' => $model->id,
+                    'type' => $model::getSearchDocumentType()
+                ],
+            ];
+        }
+
         $params = [
             'index' => $model::getSearchIndexName(),
             'type' => $model::getSearchDocumentType(),
-            'body' => $model->toArray(),
+            'body' => $body,
             'id' => $model->id
         ];
-
         $this->client->index($params);
     }
 
@@ -134,6 +186,25 @@ class ElasticSearchEngine implements SearchEngineInterface
         return $this->hydrator->hydrate($queryResponse, $models);
     }
 
+    public function suggest(array $models, $text)
+    {
+        $params = [
+            'index' => $this->getIndexes($models),
+            'body' => [
+                'suggest' => [
+                    'text' => $text,
+                    'completion' => [
+                        'field' => '__suggest'
+                    ]
+                ]
+            ]
+        ];
+
+        $response = $this->client->suggest($params);
+
+        return array_key_exists('suggest', $response) ? $response['suggest'][0]['options'] : [];
+    }
+
     /**
      * Get the list of indexes to search for a given list of fully qualified
      * class names of models
@@ -168,5 +239,18 @@ class ElasticSearchEngine implements SearchEngineInterface
             $types[] = $model::getSearchDocumentType();
         }
         return array_unique($types);
+    }
+
+    /**
+     * Make sure an index exists for a model
+     *
+     * @param Model $model
+     */
+    protected function createIndexFor(Model $model)
+    {
+        try {
+            $this->client->indices()->create(['index' => $model::getSearchIndexName()]);
+
+        } catch(BadRequest400Exception $e) {}
     }
 } 

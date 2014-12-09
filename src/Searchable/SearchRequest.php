@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\App;
  */
 class SearchRequest
 {
+    protected $models;
+
     /**
      * Add the fully qualified class name of a model to the list of
      * models to search.
